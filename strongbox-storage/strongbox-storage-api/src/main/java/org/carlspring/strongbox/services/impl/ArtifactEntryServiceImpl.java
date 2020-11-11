@@ -167,29 +167,7 @@ class ArtifactEntryServiceImpl extends AbstractArtifactEntryService
     {
         coordinates = prepareParameterMap(coordinates, strict);
         String sQuery = buildCoordinatesQuery(storageRepositoryPairList, coordinates.keySet(), Collections.emptySet(), 0, 0, null, strict);
-        sQuery = sQuery.replace("*", "count(distinct(artifactCoordinates))");
-        OSQLSynchQuery<ArtifactEntry> oQuery = new OSQLSynchQuery<>(sQuery);
-
-        Map<String, Object> parameterMap = new HashMap<>(coordinates);
-
-        Pair<String, String>[] p = storageRepositoryPairList.toArray(new Pair[storageRepositoryPairList.size()]);
-        IntStream.range(0, storageRepositoryPairList.size()).forEach(idx -> {
-            String storageId = p[idx].getValue0();
-            String repositoryId = p[idx].getValue1();
-
-            if (storageId != null && !storageId.trim().isEmpty())
-            {
-                parameterMap.put(String.format("storageId%s", idx), p[idx].getValue0());
-            }
-            if (repositoryId != null && !repositoryId.trim().isEmpty())
-            {
-                parameterMap.put(String.format("repositoryId%s", idx), p[idx].getValue1());
-            }
-        });
-
-
-        List<ODocument> result = getDelegate().command(oQuery).execute(parameterMap);
-        return (Long) result.iterator().next().field("count");
+        testHelper(String sQuery);
     }
 
     @Override
@@ -199,29 +177,7 @@ class ArtifactEntryServiceImpl extends AbstractArtifactEntryService
     {
         coordinates = prepareParameterMap(coordinates, strict);
         String sQuery = buildCoordinatesQuery(storageRepositoryPairList, coordinates.keySet(), Collections.emptySet(), 0, 0, null, strict);
-        sQuery = sQuery.replace("*", "count(*)");
-        OSQLSynchQuery<ArtifactEntry> oQuery = new OSQLSynchQuery<>(sQuery);
-
-        Map<String, Object> parameterMap = new HashMap<>(coordinates);
-
-        Pair<String, String>[] p = storageRepositoryPairList.toArray(new Pair[storageRepositoryPairList.size()]);
-        IntStream.range(0, storageRepositoryPairList.size()).forEach(idx -> {
-            String storageId = p[idx].getValue0();
-            String repositoryId = p[idx].getValue1();
-
-            if (storageId != null && !storageId.trim().isEmpty())
-            {
-                parameterMap.put(String.format("storageId%s", idx), p[idx].getValue0());
-            }
-            if (repositoryId != null && !repositoryId.trim().isEmpty())
-            {
-                parameterMap.put(String.format("repositoryId%s", idx), p[idx].getValue1());
-            }
-        });
-
-
-        List<ODocument> result = getDelegate().command(oQuery).execute(parameterMap);
-        return (Long) result.iterator().next().field("count");
+        testHelper(String sQuery);
     }
 
     @Override
@@ -440,6 +396,33 @@ class ArtifactEntryServiceImpl extends AbstractArtifactEntryService
         result.setArtifactCoordinates(getDelegate().detachAll(entity.getArtifactCoordinates(), true));
 
         return result;
+    }
+
+    public Long testHelper(String sQuery)
+    {
+        sQuery = sQuery.replace("*", "count(distinct(artifactCoordinates))");
+        OSQLSynchQuery<ArtifactEntry> oQuery = new OSQLSynchQuery<>(sQuery);
+
+        Map<String, Object> parameterMap = new HashMap<>(coordinates);
+
+        Pair<String, String>[] p = storageRepositoryPairList.toArray(new Pair[storageRepositoryPairList.size()]);
+        IntStream.range(0, storageRepositoryPairList.size()).forEach(idx -> {
+            String storageId = p[idx].getValue0();
+            String repositoryId = p[idx].getValue1();
+
+            if (storageId != null && !storageId.trim().isEmpty())
+            {
+                parameterMap.put(String.format("storageId%s", idx), p[idx].getValue0());
+            }
+            if (repositoryId != null && !repositoryId.trim().isEmpty())
+            {
+                parameterMap.put(String.format("repositoryId%s", idx), p[idx].getValue1());
+            }
+        });
+
+
+        List<ODocument> result = getDelegate().command(oQuery).execute(parameterMap);
+        return (Long) result.iterator().next().field("count");
     }
 
 
