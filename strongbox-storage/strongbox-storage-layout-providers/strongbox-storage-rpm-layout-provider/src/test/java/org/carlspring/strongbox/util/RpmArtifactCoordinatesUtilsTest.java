@@ -25,11 +25,7 @@ class RpmArtifactCoordinatesUtilsTest
                                                    RpmPackageType.BINARY.getPostfix(),
                                                    "rpm");
 
-        assertThat(expectedCoord.get(0)).isEqualTo(actualCoord.getId());
-        assertThat(expectedCoord.get(1)).isEqualTo(actualCoord.getVersion());
-        assertThat(expectedCoord.get(2)).isEqualTo(actualCoord.getRelease());
-        assertThat(expectedCoord.get(3)).isEqualTo(actualCoord.getArchitecture());
-        assertThat(expectedCoord.get(4)).isEqualTo(actualCoord.getPackageType());
+        testHelper()
     }
 
     @Test
@@ -45,11 +41,7 @@ class RpmArtifactCoordinatesUtilsTest
                                                    RpmPackageType.BINARY.getPostfix(),
                                                    "rpm");
 
-        assertThat(expectedCoord.get(0)).isEqualTo(actualCoord.getId());
-        assertThat(expectedCoord.get(1)).isEqualTo(actualCoord.getVersion());
-        assertThat(expectedCoord.get(2)).isEqualTo(actualCoord.getRelease());
-        assertThat(expectedCoord.get(3)).isEqualTo(actualCoord.getArchitecture());
-        assertThat(expectedCoord.get(4)).isEqualTo(actualCoord.getPackageType());
+        testHelper()
     }
 
     @Test
@@ -64,11 +56,7 @@ class RpmArtifactCoordinatesUtilsTest
                                                    null,
                                                    "src");
 
-        assertThat(expectedCoord.get(0)).isEqualTo(actualCoord.getId());
-        assertThat(expectedCoord.get(1)).isEqualTo(actualCoord.getVersion());
-        assertThat(expectedCoord.get(2)).isEqualTo(actualCoord.getRelease());
-        assertThat(expectedCoord.get(3)).isEqualTo(actualCoord.getArchitecture());
-        assertThat(expectedCoord.get(4)).isEqualTo(actualCoord.getPackageType());
+        testHelper()
     }
 
     @Test
@@ -84,11 +72,7 @@ class RpmArtifactCoordinatesUtilsTest
                                                    RpmPackageType.BINARY.getPostfix(),
                                                    "rpm");
 
-        assertThat(expectedCoord.get(0)).isEqualTo(actualCoord.getId());
-        assertThat(expectedCoord.get(1)).isEqualTo(actualCoord.getVersion());
-        assertThat(expectedCoord.get(2)).isEqualTo(actualCoord.getRelease());
-        assertThat(expectedCoord.get(3)).isEqualTo(actualCoord.getArchitecture());
-        assertThat(expectedCoord.get(4)).isEqualTo(actualCoord.getPackageType());
+        testHelper()
     }
 
     @Test
@@ -104,11 +88,7 @@ class RpmArtifactCoordinatesUtilsTest
                                                    RpmPackageType.BINARY.getPostfix(),
                                                    "rpm");
 
-        assertThat(expectedCoord.get(0)).isEqualTo(actualCoord.getId());
-        assertThat(expectedCoord.get(1)).isEqualTo(actualCoord.getVersion());
-        assertThat(expectedCoord.get(2)).isEqualTo(actualCoord.getRelease());
-        assertThat(expectedCoord.get(3)).isEqualTo(actualCoord.getArchitecture());
-        assertThat(expectedCoord.get(4)).isEqualTo(actualCoord.getPackageType());
+        testHelper()
 
     }
 
@@ -125,11 +105,7 @@ class RpmArtifactCoordinatesUtilsTest
                                                    RpmPackageType.BINARY.getPostfix(),
                                                    "rpm");
 
-        assertThat(expectedCoord.get(0)).isEqualTo(actualCoord.getId());
-        assertThat(expectedCoord.get(1)).isEqualTo(actualCoord.getVersion());
-        assertThat(expectedCoord.get(2)).isEqualTo(actualCoord.getRelease());
-        assertThat(expectedCoord.get(3)).isEqualTo(actualCoord.getArchitecture());
-        assertThat(expectedCoord.get(4)).isEqualTo(actualCoord.getPackageType());
+        testHelper()
 
     }
 
@@ -145,11 +121,7 @@ class RpmArtifactCoordinatesUtilsTest
                                                    null,
                                                    "src");
 
-        assertThat(expectedCoord.get(0)).isEqualTo(actualCoord.getId());
-        assertThat(expectedCoord.get(1)).isEqualTo(actualCoord.getVersion());
-        assertThat(expectedCoord.get(2)).isEqualTo(actualCoord.getRelease());
-        assertThat(expectedCoord.get(3)).isEqualTo(actualCoord.getArchitecture());
-        assertThat(expectedCoord.get(4)).isEqualTo(actualCoord.getPackageType());
+        testHelper()
     }
 
 
@@ -172,5 +144,14 @@ class RpmArtifactCoordinatesUtilsTest
                 .isThrownBy(() -> RpmArtifactCoordinatesUtils.parse(packageName))
                 .withMessageContaining("Incorrect filename: package should have architecture or SRC suffix");
 
+    }
+
+    void testHelper()
+    {
+        assertThat(expectedCoord.get(0)).isEqualTo(actualCoord.getId());
+        assertThat(expectedCoord.get(1)).isEqualTo(actualCoord.getVersion());
+        assertThat(expectedCoord.get(2)).isEqualTo(actualCoord.getRelease());
+        assertThat(expectedCoord.get(3)).isEqualTo(actualCoord.getArchitecture());
+        assertThat(expectedCoord.get(4)).isEqualTo(actualCoord.getPackageType());
     }
 }
