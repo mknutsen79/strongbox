@@ -145,7 +145,7 @@ class RpmArtifactCoordinatesUtilsTest
                 .withMessageContaining("Incorrect filename: package should have architecture or SRC suffix");
 
     }
-
+    @Test
     void testHelper()
     {
         assertThat(expectedCoord.get(0)).isEqualTo(actualCoord.getId());
