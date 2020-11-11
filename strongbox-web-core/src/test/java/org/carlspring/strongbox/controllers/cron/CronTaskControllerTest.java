@@ -117,18 +117,7 @@ public class CronTaskControllerTest
                                                               "repositoryId").value(
                                                               "releases").build() }));
 
-        mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
-               .accept(MediaType.APPLICATION_JSON_VALUE)
-               .body(cronTaskConfigurationForm)
-               .when()
-               .put(getContextBaseUrl())
-               .peek()
-               .then()
-               .statusCode(HttpStatus.BAD_REQUEST.value())
-               .expect(MockMvcResultMatchers.jsonPath("errors[0].messages").value(hasItem(stringContainsInOrder(
-                       Arrays.asList(
-                               new String[]{ "Cron expression is required" })))))
-               .expect(MockMvcResultMatchers.jsonPath("errors[0].name").value(equalTo("cronExpression")));
+        testHelper3();
     }
 
     @Test
@@ -145,18 +134,7 @@ public class CronTaskControllerTest
                                                               "repositoryId").value(
                                                               "releases").build() }));
 
-        mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
-               .accept(MediaType.APPLICATION_JSON_VALUE)
-               .body(cronTaskConfigurationForm)
-               .when()
-               .put(getContextBaseUrl())
-               .peek()
-               .then()
-               .statusCode(HttpStatus.BAD_REQUEST.value())
-               .expect(MockMvcResultMatchers.jsonPath("errors[0].messages").value(hasItem(stringContainsInOrder(
-                       Arrays.asList(
-                               new String[]{ "Cron expression is invalid" })))))
-               .expect(MockMvcResultMatchers.jsonPath("errors[0].name").value(equalTo("cronExpression")));
+        testHelper3();
     }
 
     @Test
@@ -228,18 +206,7 @@ public class CronTaskControllerTest
                 Arrays.asList(new CronTaskConfigurationFormField[]{ CronTaskConfigurationFormField.newBuilder().name(
                         "repositoryId").value("mummy").build() }));
 
-        mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
-               .accept(MediaType.APPLICATION_JSON_VALUE)
-               .body(cronTaskConfigurationForm)
-               .when()
-               .put(getContextBaseUrl())
-               .peek()
-               .then()
-               .statusCode(HttpStatus.BAD_REQUEST.value())
-               .expect(MockMvcResultMatchers.jsonPath("errors[0].messages").value(hasItem(stringContainsInOrder(
-                       Arrays.asList(
-                               new String[]{ "Invalid value [mummy] provided. Possible values do not contain this value." })))))
-               .expect(MockMvcResultMatchers.jsonPath("errors[0].name").value(equalTo("fields[0].value")));
+        testHelper2();
     }
 
     @Test
@@ -255,18 +222,7 @@ public class CronTaskControllerTest
 
         System.out.println(objectMapper.writeValueAsString(cronTaskConfigurationForm));
 
-        mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
-               .accept(MediaType.APPLICATION_JSON_VALUE)
-               .body(cronTaskConfigurationForm)
-               .when()
-               .put(getContextBaseUrl())
-               .peek()
-               .then()
-               .statusCode(HttpStatus.BAD_REQUEST.value())
-               .expect(MockMvcResultMatchers.jsonPath("errors[0].messages").value(hasItem(stringContainsInOrder(
-                       Arrays.asList(
-                               new String[]{ "Invalid value [mummy] provided. Possible values do not contain this value." })))))
-               .expect(MockMvcResultMatchers.jsonPath("errors[0].name").value(equalTo("fields[0].value")));
+        testHelper2();
     }
 
     @Test
@@ -347,26 +303,7 @@ public class CronTaskControllerTest
     public void afterSuccessfulCronTaskCreationHeadersShouldContainCronUuid()
     {
         CronTaskConfigurationForm cronTaskConfigurationForm = new CronTaskConfigurationForm();
-        cronTaskConfigurationForm.setJobClass(RegenerateChecksumCronJob.class.getName());
-        cronTaskConfigurationForm.setCronExpression("0 11 11 11 11 ? 2100");
-        cronTaskConfigurationForm.setFields(
-                Arrays.asList(new CronTaskConfigurationFormField[]{ CronTaskConfigurationFormField.newBuilder().name(
-                        "forceRegeneration").value("false").build() }));
-
-        Headers headers = mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
-                                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                                 .body(cronTaskConfigurationForm)
-                                 .when()
-                                 .put(getContextBaseUrl())
-                                 .peek()
-                                 .then()
-                                 .statusCode(HttpStatus.OK.value())
-                                 .and()
-                                 .extract()
-                                 .headers();
-
-        UUID cronUuid = UUID.fromString(headers.getValue(HEADER_NAME_CRON_TASK_ID));
-        assertThat(cronUuid).isNotNull();
+        testHelper(CronTaskConfigurationForm cronTaskConfigurationForm);
 
         deleteConfig(cronUuid);
     }
@@ -375,26 +312,7 @@ public class CronTaskControllerTest
     public void completeCronTaskCrudTest()
     {
         CronTaskConfigurationForm cronTaskConfigurationForm = new CronTaskConfigurationForm();
-        cronTaskConfigurationForm.setJobClass(RegenerateChecksumCronJob.class.getName());
-        cronTaskConfigurationForm.setCronExpression("0 11 11 11 11 ? 2100");
-        cronTaskConfigurationForm.setFields(
-                Arrays.asList(new CronTaskConfigurationFormField[]{ CronTaskConfigurationFormField.newBuilder().name(
-                        "forceRegeneration").value("false").build() }));
-
-        Headers headers = mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
-                                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                                 .body(cronTaskConfigurationForm)
-                                 .when()
-                                 .put(getContextBaseUrl())
-                                 .peek()
-                                 .then()
-                                 .statusCode(HttpStatus.OK.value())
-                                 .and()
-                                 .extract()
-                                 .headers();
-
-        UUID cronUuid = UUID.fromString(headers.getValue(HEADER_NAME_CRON_TASK_ID));
-        assertThat(cronUuid).isNotNull();
+        testHelper(CronTaskConfigurationForm cronTaskConfigurationForm);
 
         CronTaskConfigurationDto config = mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
                                                  .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -547,5 +465,64 @@ public class CronTaskControllerTest
                       .get(getContextBaseUrl() + "/" + uuid)
                       .peek();
     }
+
+    public void testHelper(CronTaskConfigurationForm cronTaskConfigurationForm)
+    {
+        cronTaskConfigurationForm.setJobClass(RegenerateChecksumCronJob.class.getName());
+        cronTaskConfigurationForm.setCronExpression("0 11 11 11 11 ? 2100");
+        cronTaskConfigurationForm.setFields(
+                Arrays.asList(new CronTaskConfigurationFormField[]{ CronTaskConfigurationFormField.newBuilder().name(
+                        "forceRegeneration").value("false").build() }));
+
+        Headers headers = mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .body(cronTaskConfigurationForm)
+                .when()
+                .put(getContextBaseUrl())
+                .peek()
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .and()
+                .extract()
+                .headers();
+
+        UUID cronUuid = UUID.fromString(headers.getValue(HEADER_NAME_CRON_TASK_ID));
+        assertThat(cronUuid).isNotNull();
+
+    }
+
+    public void testHelper2()
+    {
+        mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .body(cronTaskConfigurationForm)
+                .when()
+                .put(getContextBaseUrl())
+                .peek()
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .expect(MockMvcResultMatchers.jsonPath("errors[0].messages").value(hasItem(stringContainsInOrder(
+                        Arrays.asList(
+                                new String[]{ "Invalid value [mummy] provided. Possible values do not contain this value." })))))
+                .expect(MockMvcResultMatchers.jsonPath("errors[0].name").value(equalTo("fields[0].value")));
+    }
+
+    public void testHelper3()
+    {
+        mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .body(cronTaskConfigurationForm)
+                .when()
+                .put(getContextBaseUrl())
+                .peek()
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .expect(MockMvcResultMatchers.jsonPath("errors[0].messages").value(hasItem(stringContainsInOrder(
+                        Arrays.asList(
+                                new String[]{ "Cron expression is required" })))))
+                .expect(MockMvcResultMatchers.jsonPath("errors[0].name").value(equalTo("cronExpression")));
+    }
+
+
 
 }
