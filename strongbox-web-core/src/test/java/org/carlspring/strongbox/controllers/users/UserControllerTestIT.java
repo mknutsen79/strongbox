@@ -100,17 +100,7 @@ public class UserControllerTestIT
         UserForm userForm = buildFromUser(new UserData(user), u -> u.setEnabled(true));
 
         // create new user
-        mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
-               .accept(acceptHeader)
-               .body(userForm)
-               .when()
-               .put(getContextBaseUrl())
-               .peek() // Use peek() to print the output
-               .then()
-               .statusCode(HttpStatus.OK.value()) // check http status code
-               .body(containsString(SUCCESSFUL_CREATE_USER))
-               .extract()
-               .asString();
+        testHelper(String acceptHeader, String username);
 
         // retrieve newly created user and store the objectId
         User  createdUser = retrieveUserByName(user.getUsername());
@@ -245,17 +235,7 @@ public class UserControllerTestIT
         // create new user
         UserForm test = buildUser(username, "password-update", "my-new-security-token");
 
-        mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
-               .accept(acceptHeader)
-               .body(test)
-               .when()
-               .put(getContextBaseUrl())
-               .peek() // Use peek() to print the output
-               .then()
-               .statusCode(HttpStatus.OK.value()) // check http status code
-               .body(containsString(SUCCESSFUL_CREATE_USER))
-               .extract()
-               .asString();
+        testHelper(String acceptHeader, String username);
 
         // retrieve newly created user and store the objectId
         User createdUser = retrieveUserByName(test.getUsername());
@@ -680,17 +660,7 @@ public class UserControllerTestIT
         UserForm userForm = buildFromUser(new UserData(user), u -> u.setEnabled(true));
 
         // create new user
-        mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(acceptHeader)
-                .body(userForm)
-                .when()
-                .put(getContextBaseUrl())
-                .peek() // Use peek() to print the output
-                .then()
-                .statusCode(HttpStatus.OK.value()) // check http status code
-                .body(containsString(SUCCESSFUL_CREATE_USER))
-                .extract()
-                .asString();
+        testHelper(String acceptHeader, String username);
 
         // retrieve newly created user and store the objectId
         User createdUser = retrieveUserByName(user.getUsername());
@@ -771,6 +741,21 @@ public class UserControllerTestIT
         }
 
         return dto;
+    }
+
+    public void testHelper(String acceptHeader, String username)
+    {
+        mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(acceptHeader)
+                .body(userForm)
+                .when()
+                .put(getContextBaseUrl())
+                .peek() // Use peek() to print the output
+                .then()
+                .statusCode(HttpStatus.OK.value()) // check http status code
+                .body(containsString(SUCCESSFUL_CREATE_USER))
+                .extract()
+                .asString();
     }
 
 }

@@ -358,4 +358,23 @@ public class RepositoryHostedIndexCreatorSearchTest
         }
     }
 
+    public void testHelper()
+    {
+        final String storageId = repository.getStorage().getId();
+        final String repositoryId = repository.getId();
+
+        RepositoryPath repositoryPath = repositoryPathResolver.resolve(storageId,
+                repositoryId,
+                "org/carlspring/properties-injector/1.7/properties-injector-1.7.jar");
+
+        artifactManagementService.validateAndStore(repositoryPath, jarArtifact.getInputStream());
+
+        try (RepositoryIndexingContextAssert repositoryIndexingContextAssert = new RepositoryIndexingContextAssert(
+                repository, repositoryIndexCreator, indexingContextFactory))
+        {
+            Query q = indexer.constructQuery(MAVEN.CLASSNAMES, new UserInputSearchExpression("PropertiesResources"));
+
+            repositoryIndexingContextAssert.onSearchQuery(q).hitTotalTimes(1);
+    }
+
 }
